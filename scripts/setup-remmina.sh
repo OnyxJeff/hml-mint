@@ -18,7 +18,7 @@ mkdir -p "$REAL_HOME/Desktop"
 # --------------------------------------------------
 
 echo "copying Remmina profile for SimulationCraft VM..."
-cp -rv $REAL_HOME/hml-golden/remmina-profiles/. $REAL_HOME/.local/share/remmina/
+cp -rv $REAL_HOME/hml-mint/remmina-profiles/. $REAL_HOME/.local/share/remmina/
 
 # --------------------------------------------------
 # Fixing Ownership

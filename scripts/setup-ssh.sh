@@ -39,7 +39,7 @@ chmod 600 "$SSH_DIR/config"
 
 # --------------------------------------------------
 
-KEYS_SOURCE="$REAL_HOME/hml-golden/ssh-config/keys"
+KEYS_SOURCE="$REAL_HOME/hml-mint/ssh-config/keys"
 
 if compgen -G "$KEYS_SOURCE/*" > /dev/null; then
     cp -f "$KEYS_SOURCE"/* "$SSH_DIR/"
@@ -54,7 +54,7 @@ fi
 
 # --------------------------------------------------
 
-COMPUTE_SOURCE="$REAL_HOME/hml-golden/ssh-config/config/compute.conf"
+COMPUTE_SOURCE="$REAL_HOME/hml-mint/ssh-config/config/compute.conf"
 
 if [[ -f "$COMPUTE_SOURCE" ]]; then
 cp -f "$COMPUTE_SOURCE" "$CONFIG_DIR/compute.conf"

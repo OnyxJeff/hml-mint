@@ -19,7 +19,7 @@ fi
 
 REAL_USER="${SUDO_USER:-$USER}"
 REAL_HOME="$(eval echo "~$REAL_USER")"
-REPO_DIR="$REAL_HOME/hml-golden"
+REPO_DIR="$REAL_HOME/hml-mint"
 
 # ============================
 # COLORS
