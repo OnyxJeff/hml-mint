@@ -71,7 +71,6 @@ Terminal=false
 # --------------------------------------------------
 # Steam (optional)
 # --------------------------------------------------
-if [[ -x /usr/bin/steamlink ]]; then
 write_desktop "Steam.desktop" "
 #!/usr/bin/env xdg-open
 [Desktop Entry]
@@ -363,7 +362,6 @@ fi
 # --------------------------------------------------
 # VS Code (optional)
 # --------------------------------------------------
-
 write_desktop "code.desktop" "
 [Desktop Entry]
 Name=Visual Studio Code
@@ -394,7 +392,6 @@ Name[zh_TW]=開新空視窗
 Exec=/usr/share/code/code --new-window %F
 Icon=vscode
 "
-fi
 
 # --------------------------------------------------
 # FIX OWNERSHIP (THIS IS IMPORTANT)
