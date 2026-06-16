@@ -357,7 +357,6 @@ Name[uk]=Друзі
 Name[vi]=Bạn bè
 Exec=/usr/games/steam steam://open/friends
 "
-fi
 
 # --------------------------------------------------
 # VS Code (optional)
