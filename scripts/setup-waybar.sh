@@ -1,26 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REAL_USER="${SUDO_USER:-$USER}"
+# --------------------------------------------------
+# Detect real user safely (LMDE-friendly)
+# --------------------------------------------------
+if [ -n "${SUDO_USER:-}" ]; then
+    REAL_USER="$SUDO_USER"
+else
+    REAL_USER="$(whoami)"
+fi
+
 REAL_HOME="$(eval echo "~$REAL_USER")"
 
 WAYBAR_DIR="$REAL_HOME/.config/waybar"
-LABWC_DIR="$REAL_HOME/.config/labwc"
+AUTOSTART_DIR="$REAL_HOME/.config/autostart"
 
 echo ""
 echo "========================================="
-echo " Waybar Configuration"
+echo " Waybar Setup (LMDE7 Cinnamon)"
 echo "========================================="
 echo "[*] User: $REAL_USER"
 echo ""
 
 mkdir -p "$WAYBAR_DIR"
-mkdir -p "$LABWC_DIR"
+mkdir -p "$AUTOSTART_DIR"
 
 # --------------------------------------------------
 # WAYBAR CONFIG
 # --------------------------------------------------
-
 cat > "$WAYBAR_DIR/config.jsonc" <<EOF
 {
   "layer": "top",
@@ -46,7 +53,6 @@ EOF
 # --------------------------------------------------
 # WAYBAR STYLE
 # --------------------------------------------------
-
 cat > "$WAYBAR_DIR/style.css" <<'EOF'
 * {
     border: none;
@@ -82,9 +88,8 @@ window#waybar {
 EOF
 
 # --------------------------------------------------
-# TAILSCALE STATUS SCRIPT
+# TAILSCALE STATUS SCRIPT (LMDE-safe, no jq needed)
 # --------------------------------------------------
-
 cat > "$WAYBAR_DIR/tailscale-status.sh" <<'EOF'
 #!/usr/bin/env bash
 
@@ -93,10 +98,9 @@ if ! command -v tailscale >/dev/null 2>&1; then
     exit 0
 fi
 
-STATUS=$(tailscale status --json 2>/dev/null || true)
+STATUS="$(tailscale status 2>/dev/null || true)"
 
-if command -v jq >/dev/null 2>&1 && \
-   echo "$STATUS" | jq -e '.BackendState == "Running"' >/dev/null 2>&1; then
+if echo "$STATUS" | grep -qi "active"; then
     echo '{"text":"● Tailscale","class":"connected","tooltip":"Connected"}'
 else
     echo '{"text":"● Tailscale","class":"disconnected","tooltip":"Disconnected"}'
@@ -106,38 +110,47 @@ EOF
 chmod +x "$WAYBAR_DIR/tailscale-status.sh"
 
 # --------------------------------------------------
-# TAILSCALE TOGGLE SCRIPT
+# TAILSCALE TOGGLE SCRIPT (LMDE Cinnamon safe)
 # --------------------------------------------------
-
 cat > "$WAYBAR_DIR/tailscale-toggle.sh" <<'EOF'
 #!/usr/bin/env bash
 
-if tailscale status >/dev/null 2>&1; then
-    pkexec tailscale down
+if ! command -v tailscale >/dev/null 2>&1; then
+    notify-send "Tailscale" "Not installed"
+    exit 1
+fi
+
+# Prefer systemd (LMDE default)
+if systemctl is-active --quiet tailscaled; then
+    pkexec systemctl stop tailscaled
 else
-    pkexec tailscale up
+    pkexec systemctl start tailscaled
 fi
 EOF
 
 chmod +x "$WAYBAR_DIR/tailscale-toggle.sh"
 
 # --------------------------------------------------
-# AUTOSTART (LABWC)
+# CINNAMON AUTOSTART
 # --------------------------------------------------
-
-touch "$LABWC_DIR/autostart"
-
-grep -qxF "waybar &" "$LABWC_DIR/autostart" || echo "waybar &" >> "$LABWC_DIR/autostart"
-
-# prevent duplicate Waybar instances
-sed -i '/waybar &/d' "$LABWC_DIR/autostart"
-echo "waybar &" >> "$LABWC_DIR/autostart"
+cat > "$AUTOSTART_DIR/waybar.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=Waybar
+Exec=sh -c "sleep 2 && waybar"
+X-GNOME-Autostart-enabled=true
+NoDisplay=false
+Comment=Start Waybar panel
+EOF
 
 # --------------------------------------------------
-# PERMISSIONS
+# FIX OWNERSHIP
 # --------------------------------------------------
-
-chown -R "$REAL_USER:$REAL_USER" "$WAYBAR_DIR"
+chown -R "$REAL_USER:$REAL_USER" "$WAYBAR_DIR" "$AUTOSTART_DIR"
 
 echo ""
-echo "[✓] Waybar configured successfully"
+echo "[✓] Waybar configured successfully for LMDE7 Cinnamon"
+echo ""
+echo "NOTE:"
+echo "- Waybar will start on login via Cinnamon autostart"
+echo "- Tailscaled is controlled via systemd + pkexec"
