@@ -1,0 +1,21 @@
+# SSH keys
+*.pem
+*.key
+*.pub
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secrets / local overrides
+.env
+*.secret
+
+# Temporary files
+*.tmp
+
+# Remmina cache
+*.remmina~

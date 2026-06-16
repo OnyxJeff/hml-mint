@@ -1,0 +1,33 @@
+name: HML-Golden Build Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  bootstrap-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (simulation layer)
+        run: |
+          sudo apt update
+          sudo apt install -y bash curl git sudo
+
+      - name: Make bootstrap executable
+        run: chmod +x bootstrap.sh
+
+      - name: Run bootstrap (dry validation mode)
+        run: |
+          sudo bash ./bootstrap.sh --ci-mode
+
+      - name: Validate repo structure
+        run: |
+          test -f scripts/install-packages.sh
+          test -f scripts/setup-theme.sh
+          test -f scripts/setup-waybar.sh
+          echo "All core scripts present"
