@@ -25,10 +25,10 @@ fi
 
 REAL_USER="${SUDO_USER:-$USER}"
 REAL_HOME="$(eval echo "~$REAL_USER")"
-REPO_URL="https://github.com/OnyxJeff/hml-golden.git"
-REPO_NAME="hml-golden"
+REPO_URL="https://github.com/OnyxJeff/hml-mint.git"
+REPO_NAME="hml-mint"
 BASE_DIR="$REAL_HOME"
-LOG_FILE="$REAL_HOME/hml-golden-bootstrap.log"
+LOG_FILE="$REAL_HOME/hml-mint-bootstrap.log"
 
 # Prevent Git credential prompts (IMPORTANT)
 export GIT_TERMINAL_PROMPT=0
@@ -128,7 +128,7 @@ run_with_spinner() {
 # START
 # ============================
 
-section "HML-GOLDEN BOOTSTRAP"
+section "HML-MINT BOOTSTRAP"
 
 echo -e "${CYAN}Log file:${NC} $LOG_FILE"
 pause
